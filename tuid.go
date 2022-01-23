@@ -1,4 +1,5 @@
-package tuid_go
+// Package tuid provides facilities for generating and working with Time-based Unique Identifiers (TUID).
+package tuid
 
 import (
 	"bytes"
@@ -12,7 +13,7 @@ import (
 const MinID = "5Hr02eJHAfTt1tTM" // First ID at 2000-01-01T00:00:00Z
 const MaxID = "MuklDY5bgW1s9Ev2" // First ID at 2100-01-01T00:00:00Z
 
-// A TUID is a Time-based Unique Identifier (e.g. 91Mq07yx9IxHCi5Y) that has an embedded timestamp and sorts
+// TUID is a Time-based Unique Identifier (e.g. 91Mq07yx9IxHCi5Y) that has an embedded timestamp and sorts
 // chronologically. It's a 16-digit base-62 big integer, where the leftmost bits are a timestamp with nanosecond
 // resolution (e.g. 2021-03-08T05:54:09.208207000Z) and the rightmost 32 bits are "entropy" (a random number),
 // providing some assurance of uniqueness if multiple IDs are created at the same moment. Collisions in a single

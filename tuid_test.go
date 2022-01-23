@@ -1,4 +1,4 @@
-package tuid_go
+package tuid
 
 import (
 	"fmt"

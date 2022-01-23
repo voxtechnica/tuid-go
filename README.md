@@ -25,18 +25,29 @@ and easier to work with than a UUID. A FriendlyID has the great advantage of bei
 but it's missing the embedded timestamp and is not chronologically sortable. Also, a FriendlyID version of a full
 128-bit UUID is 22 characters, whereas a TUID is only 16 characters.
 
-So, why use a TUID? Because you like the embedded timestamp, and you like being able to sort things chronologically.
+So, why use a TUID? Because you like the embedded timestamp, and you like being able to sort things with IDs
+chronologically.
 
-## Using TUIDs
+## Installation
+
+```bash
+go get github.com/voxtechnica/tuid-go
+```
+
+## Usage
 
 Creating a new TUID is simple:
 
-* `id := TUID("91Mq07yx9IxHCi5Y")` :: Cast a string to a TUID.
+* `id := tuid.TUID("91Mq07yx9IxHCi5Y")` :: Cast a string to a TUID.
 * `id := tuid.NewID()` :: Create a TUID with the current system time and a random entropy value.
-* `id := tuid.NewIDWithTime(time.Now())` :: Create a TUID with a specified timestamp and random entropy value.
+* `id := tuid.NewIDWithTime(time.Now())` :: Create a TUID with a specified timestamp and a random entropy value.
 * `id := tuid.FirstIdWithTime(time.Now())` :: Create the first TUID with a specified timestamp and zero entropy. These
   are useful for paging through a collection of things with IDs.
 
-If you have an ID string, and you want check if it's a valid TUID, you can use the `tuid.IsValid(id)` function. And, for
-valid TUIDs, you can extract the embedded timestamp with `id.Time()`. If you have a pair of IDs, you can compute the
-`time.Duration` between them with `tuid.Duration(startId, stopId)`.
+If you have an ID string, and you want check if it's a valid TUID, you can use the function `tuid.IsValid(id)`. Valid
+means that it has only base-62 characters (digits 0-9, letters A-Z, and letters a-z), and that it has an embedded
+timestamp in the 21st century.
+
+You can extract the embedded timestamp from a TUID with `id.Time()`. This tells you when the ID (or the thing with the
+ID) was created. It can also be useful for grouping things in time (e.g. events that occur on the same day). If you have
+a pair of IDs (e.g. two events), you can compute the `time.Duration` between them with `tuid.Duration(startId, stopId)`.
