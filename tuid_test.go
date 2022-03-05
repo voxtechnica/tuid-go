@@ -111,8 +111,8 @@ func TestMinTuid(t *testing.T) {
 	if MinID != expectedMinID {
 		t.Error("expected MinID to be the first TUID with the minimum timestamp")
 	}
-	minId, _ := TUID(MinID).Int()
-	if minId.BitLen() != 92 {
+	minID, _ := TUID(MinID).Int()
+	if minID.BitLen() != 92 {
 		t.Error("expected min TUID to have 92 bits")
 	}
 	minEntropy, _ := TUID(MinID).Entropy()
@@ -127,8 +127,8 @@ func TestMaxTuid(t *testing.T) {
 	if MaxID != expectedMaxID {
 		t.Error("expected MaxID to be the first TUID with the maximum timestamp")
 	}
-	maxId, _ := TUID(MaxID).Int()
-	if maxId.BitLen() != 94 {
+	maxID, _ := TUID(MaxID).Int()
+	if maxID.BitLen() != 94 {
 		t.Error("expected max TUID to have 94 bits")
 	}
 	maxEntropy, _ := TUID(MaxID).Entropy()

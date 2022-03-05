@@ -10,8 +10,11 @@ import (
 	"time"
 )
 
-const MinID = "5Hr02eJHAfTt1tTM" // First ID at 2000-01-01T00:00:00Z
-const MaxID = "MuklDY5bgW1s9Ev2" // First ID at 2100-01-01T00:00:00Z
+// MinID is the first ID at 2000-01-01T00:00:00Z
+const MinID = "5Hr02eJHAfTt1tTM"
+
+// MaxID is the first ID at 2100-01-01T00:00:00Z
+const MaxID = "MuklDY5bgW1s9Ev2"
 
 // TUID is a Time-based Unique Identifier (e.g. 91Mq07yx9IxHCi5Y) that has an embedded timestamp and sorts
 // chronologically. It's a 16-digit base-62 big integer, where the leftmost bits are a timestamp with nanosecond
@@ -102,9 +105,9 @@ func IsValid(t TUID) bool {
 	if err != nil {
 		return false
 	}
-	minId, _ := decode(MinID)
-	maxId, _ := decode(MaxID)
-	return (id.Cmp(minId) >= 0) && (id.Cmp(maxId) <= 0)
+	minID, _ := decode(MinID)
+	maxID, _ := decode(MaxID)
+	return (id.Cmp(minID) >= 0) && (id.Cmp(maxID) <= 0)
 }
 
 // Compare supports sorting TUIDs chronologically
