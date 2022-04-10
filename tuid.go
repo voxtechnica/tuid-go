@@ -34,7 +34,7 @@ type TUIDInfo struct {
 func (t TUID) Int() (*big.Int, error) {
 	id, err := decode(string(t))
 	if err != nil {
-		return new(big.Int), err
+		return new(big.Int), fmt.Errorf("int: invalid TUID %s: %w", t, err)
 	}
 	return id, nil
 }
@@ -43,7 +43,7 @@ func (t TUID) Int() (*big.Int, error) {
 func (t TUID) Time() (time.Time, error) {
 	id, err := decode(string(t))
 	if err != nil {
-		return time.Time{}, err
+		return time.Time{}, fmt.Errorf("time: invalid TUID %s: %w", t, err)
 	}
 	nsec := new(big.Int).Rsh(id, 32)
 	return time.Unix(0, nsec.Int64()), nil
@@ -53,7 +53,7 @@ func (t TUID) Time() (time.Time, error) {
 func (t TUID) Entropy() (uint32, error) {
 	id, err := decode(string(t))
 	if err != nil {
-		return 0, err
+		return 0, fmt.Errorf("entropy: invalid TUID %s: %w", t, err)
 	}
 	mask := big.NewInt(1<<32 - 1)
 	entropy := new(big.Int).And(id, mask)
@@ -64,7 +64,7 @@ func (t TUID) Entropy() (uint32, error) {
 func (t TUID) Info() (TUIDInfo, error) {
 	id, err := decode(string(t))
 	if err != nil {
-		return TUIDInfo{}, err
+		return TUIDInfo{}, fmt.Errorf("info: invalid TUID %s: %w", t, err)
 	}
 	nsec := new(big.Int).Rsh(id, 32)
 	timestamp := time.Unix(0, nsec.Int64())
@@ -125,11 +125,11 @@ func Compare(t1 TUID, t2 TUID) int {
 func Duration(start TUID, stop TUID) (time.Duration, error) {
 	startTime, err := start.Time()
 	if err != nil {
-		return 0, err
+		return 0, fmt.Errorf("duration: invalid start TUID %s: %w", start, err)
 	}
 	stopTime, err := stop.Time()
 	if err != nil {
-		return 0, err
+		return 0, fmt.Errorf("duration: invalid stop TUID %s: %w", stop, err)
 	}
 	return stopTime.Sub(startTime), nil
 }
@@ -167,8 +167,8 @@ func decode(text string) (*big.Int, error) {
 		b := textBytes[size-1-i] // examine digits from right to left
 		j := int64(bytes.IndexByte(digits, b))
 		if j == -1 {
-			msg := fmt.Sprintf("base 62 decoding error: invalid digit `%s` in %s", string(b), string(textBytes))
-			return new(big.Int), errors.New(msg)
+			return new(big.Int), fmt.Errorf("base 62 decoding error: invalid digit `%s` in %s",
+				string(b), string(textBytes))
 		}
 		pow := new(big.Int).Exp(base, big.NewInt(int64(i)), nil)
 		prod := new(big.Int).Mul(big.NewInt(j), pow)

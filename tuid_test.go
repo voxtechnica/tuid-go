@@ -233,7 +233,7 @@ func TestUniqueIDs(t *testing.T) {
 		tuid := NewID()
 		ids[tuid] = struct{}{}
 	}
-	duration := time.Now().Sub(startTime)
+	duration := time.Since(startTime)
 	rate := duration.Nanoseconds() / int64(count)
 	fmt.Printf("generated %d Tuids in %s (%d ns/TUID)\n", len(ids), duration, rate)
 	if len(ids) != count {
