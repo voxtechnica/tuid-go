@@ -89,6 +89,18 @@ func TestNewTuidWithTime(t *testing.T) {
 	}
 }
 
+func TestNewTuidWithTimeAndEntropy(t *testing.T) {
+	tuid := NewID()
+	info, err := tuid.Info()
+	if err != nil {
+		t.Error(err)
+	}
+	tuid2 := NewIDWithTimeAndEntropy(info.Timestamp, info.Entropy)
+	if tuid != tuid2 {
+		t.Error("tuids did not match")
+	}
+}
+
 func TestFirstTuidWithTime(t *testing.T) {
 	now := time.Now()
 	tuid := NewIDWithTime(now)
