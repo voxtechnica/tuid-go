@@ -92,6 +92,17 @@ func NewIDWithTime(t time.Time) TUID {
 	return TUID(tuid)
 }
 
+// NewIDWithTimeAndEntropy creates a TUID with the provided timestamp and entropy
+// be very careful with this function as you get ID collisions if the caller does not manage entropy values carefully
+func NewIDWithTimeAndEntropy(t time.Time, e uint32) TUID {
+	ts := new(big.Int).Lsh(big.NewInt(t.UnixNano()), 32)
+	mask := big.NewInt(1<<32 - 1)
+	entropy := new(big.Int).And(big.NewInt(int64(e)), mask)
+	id := ts.Or(ts, entropy)
+	tuid, _ := encode(id)
+	return TUID(tuid)
+}
+
 // FirstIDWithTime creates a TUID with the provided timestamp and zero entropy, useful for query offsets
 func FirstIDWithTime(t time.Time) TUID {
 	id := new(big.Int).Lsh(big.NewInt(t.UnixNano()), 32)
