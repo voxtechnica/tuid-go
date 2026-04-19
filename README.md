@@ -1,5 +1,8 @@
 # Time-based Unique Identifiers (TUID)
 
+[![Go Reference](https://pkg.go.dev/badge/github.com/voxtechnica/tuid-go.svg)](https://pkg.go.dev/github.com/voxtechnica/tuid-go)
+[![Go Report Card](https://goreportcard.com/badge/github.com/voxtechnica/tuid-go)](https://goreportcard.com/report/github.com/voxtechnica/tuid-go)
+
 A TUID is an immutable, chronologically sortable, unique identifier with an embedded nanosecond-resolution timestamp.
 Internally, it is a big integer value, expressed as a case-sensitive base-62 string (digits 0-9, characters A-Z, and
 characters a-z). The left bits are the embedded nanoseconds since epoch, and the right 32 bits are entropy (a random
@@ -38,16 +41,50 @@ go get github.com/voxtechnica/tuid-go
 
 Creating a new TUID is simple:
 
-* `id := tuid.TUID("91Mq07yx9IxHCi5Y")` :: Cast a string to a TUID.
-* `id := tuid.NewID()` :: Create a TUID with the current system time and a random entropy value.
-* `id := tuid.NewIDWithTime(time.Now())` :: Create a TUID with a specified timestamp and a random entropy value.
-* `id := tuid.FirstIdWithTime(time.Now())` :: Create the first TUID with a specified timestamp and zero entropy. These
-  are useful for paging through a collection of things with IDs.
+```go
+package main
 
-If you have an ID string, and you want check if it's a valid TUID, you can use the function `tuid.IsValid(id)`. Valid
-means that it has only base-62 characters (digits 0-9, letters A-Z, and letters a-z), and that it has an embedded
-timestamp in the 21st century.
+import (
+	"fmt"
+	"time"
 
-You can extract the embedded timestamp from a TUID with `id.Time()`. This tells you when the ID (or the thing with the
-ID) was created. It can also be useful for grouping things in time (e.g. events that occur on the same day). If you have
-a pair of IDs (e.g. two events), you can compute the `time.Duration` between them with `tuid.Duration(startId, stopId)`.
+	"github.com/voxtechnica/tuid-go"
+)
+
+func main() {
+	// Cast a string to a TUID
+	id := tuid.TUID("91Mq07yx9IxHCi5Y")
+
+	// Create a new TUID with current time and random entropy
+	newID := tuid.NewID()
+	fmt.Println("New ID:", newID)
+
+	// Create a TUID with a specific timestamp
+	timeID := tuid.NewIDWithTime(time.Now())
+
+	// Create the first TUID for a specific time (zero entropy, useful for pagination)
+	firstID := tuid.FirstIDWithTime(time.Now())
+
+	// Validate a TUID
+	isValid := tuid.IsValid(newID)
+	fmt.Println("Is Valid:", isValid)
+
+	// Extract the timestamp
+	timestamp, _ := id.Time()
+	fmt.Println("Created at:", timestamp)
+
+	// Extract both timestamp and entropy
+	info, _ := id.Info()
+	fmt.Printf("Info - Time: %v, Entropy: %d\n", info.Timestamp, info.Entropy)
+
+	// Calculate the duration between two IDs
+	duration, _ := tuid.Duration(id, newID)
+	fmt.Println("Duration between IDs:", duration)
+}
+```
+
+Since `TUID` is an alias for a `string`, it serializes to and from JSON transparently as a string. The package also provides a `TUIDInfo` struct with JSON tags for convenience when returning detailed ID information from an API.
+
+If you have an ID string, and you want to check if it's a valid TUID, you can use the function `tuid.IsValid(id)`. Valid means that it has only base-62 characters (digits 0-9, letters A-Z, and letters a-z), and that it has an embedded timestamp in the 21st century.
+
+If you have a pair of IDs (e.g. two events), you can compute the `time.Duration` between them with `tuid.Duration(startID, stopID)`.

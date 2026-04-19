@@ -1,4 +1,12 @@
 // Package tuid provides facilities for generating and working with Time-based Unique Identifiers (TUID).
+//
+// A TUID is an immutable, chronologically sortable, unique identifier with an embedded nanosecond-resolution timestamp.
+// Internally, it is a big integer value, expressed as a case-sensitive base-62 string (digits 0-9, characters A-Z, and
+// characters a-z). The left bits are the embedded nanoseconds since epoch, and the right 32 bits are entropy (a random
+// integer). Valid IDs in the 21st century are 16 characters long, and the bit length ranges from 92-94 bits.
+//
+// Example: `91Mq07yx9IxHCi5Y` is a TUID with a UTC timestamp of `2021-03-08T05:54:09.208207Z`. Because the left bits are
+// the nanoseconds since epoch, the IDs sort in chronological order.
 package tuid
 
 import (
