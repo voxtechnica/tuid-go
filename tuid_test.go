@@ -73,6 +73,13 @@ func TestNewTuid(t *testing.T) {
 	if tuid == "" {
 		t.Error("expected a TUID, got a zero value")
 	}
+	info, err := tuid.Info()
+	if err != nil {
+		t.Error(err)
+	}
+	if info.Timestamp.Location() != time.UTC {
+		t.Errorf("expected UTC location, got %v", info.Timestamp.Location())
+	}
 }
 
 func TestNewTuidWithTime(t *testing.T) {
@@ -170,6 +177,19 @@ func TestTuid_Time(t *testing.T) {
 	}
 	if ts.UnixNano() != expected.UnixNano() {
 		t.Errorf("error: expected %s, received %s", expected, ts)
+	}
+	if ts.Location() != time.UTC {
+		t.Errorf("expected UTC location, got %v", ts.Location())
+	}
+}
+
+func TestTuid_Info(t *testing.T) {
+	info, err := TUID("91Mq07yx9IxHCi5Y").Info()
+	if err != nil {
+		t.Error(err)
+	}
+	if info.Timestamp.Location() != time.UTC {
+		t.Errorf("expected UTC location, got %v", info.Timestamp.Location())
 	}
 }
 

@@ -32,7 +32,7 @@ func ExampleTUID_Time() {
 	ts, _ := id.Time()
 	
 	// Format the timestamp
-	fmt.Println(ts.UTC().Format(time.RFC3339Nano))
+	fmt.Println(ts.Format(time.RFC3339Nano))
 	// Output: 2021-03-08T05:54:09.208207Z
 }
 

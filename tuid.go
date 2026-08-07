@@ -34,7 +34,7 @@ type TUID string
 // TUIDInfo is a convenience type for parsing a TUID's timestamp and entropy.
 type TUIDInfo struct {
 	ID        TUID      `json:"id"`
-	Timestamp time.Time `json:"timestamp"`
+	Timestamp time.Time `json:"timestamp"` // UTC timestamp extracted from the ID.
 	Entropy   uint32    `json:"entropy"`
 }
 
@@ -47,14 +47,15 @@ func (t TUID) Int() (*big.Int, error) {
 	return id, nil
 }
 
-// Time extracts the embedded timestamp from the specified TUID
+// Time extracts the embedded timestamp from the specified TUID.
+// The returned time is in UTC.
 func (t TUID) Time() (time.Time, error) {
 	id, err := decode(string(t))
 	if err != nil {
 		return time.Time{}, fmt.Errorf("time: invalid TUID %s: %w", t, err)
 	}
 	nsec := new(big.Int).Rsh(id, 32)
-	return time.Unix(0, nsec.Int64()), nil
+	return time.Unix(0, nsec.Int64()).UTC(), nil
 }
 
 // Entropy extracts the random 32 bits from the specified TUID
@@ -68,14 +69,15 @@ func (t TUID) Entropy() (uint32, error) {
 	return uint32(entropy.Int64()), nil
 }
 
-// Info extracts the timestamp and entropy from the specified TUID
+// Info extracts the timestamp and entropy from the specified TUID.
+// The returned timestamp is in UTC.
 func (t TUID) Info() (TUIDInfo, error) {
 	id, err := decode(string(t))
 	if err != nil {
 		return TUIDInfo{}, fmt.Errorf("info: invalid TUID %s: %w", t, err)
 	}
 	nsec := new(big.Int).Rsh(id, 32)
-	timestamp := time.Unix(0, nsec.Int64())
+	timestamp := time.Unix(0, nsec.Int64()).UTC()
 	mask := big.NewInt(1<<32 - 1)
 	entropy := uint32(new(big.Int).And(id, mask).Int64())
 	return TUIDInfo{t, timestamp, entropy}, nil
@@ -86,9 +88,9 @@ func (t TUID) String() string {
 	return string(t)
 }
 
-// NewID creates a new TUID with the current system time
+// NewID creates a new TUID with the current UTC time.
 func NewID() TUID {
-	return NewIDWithTime(time.Now())
+	return NewIDWithTime(time.Now().UTC())
 }
 
 // NewIDWithTime creates a TUID with the provided timestamp
