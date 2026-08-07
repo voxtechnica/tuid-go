@@ -60,10 +60,10 @@ func main() {
 	fmt.Println("New ID:", newID)
 
 	// Create a TUID with a specific timestamp
-	timeID := tuid.NewIDWithTime(time.Now())
+	timeID := tuid.NewIDWithTime(time.Now().UTC())
 
 	// Create the first TUID for a specific time (zero entropy, useful for pagination)
-	firstID := tuid.FirstIDWithTime(time.Now())
+	firstID := tuid.FirstIDWithTime(time.Now().UTC())
 
 	// Validate a TUID
 	isValid := tuid.IsValid(newID)
